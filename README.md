@@ -21,4 +21,21 @@ git switch 1-unsafe
 make test        # the tests pass
 ```
 
+From `4-errors` on, the domains are proved. That needs Lean and a Python that reads C++ as Clang
+does, fetched once (Linux, x86_64 or aarch64; Lean is about 3 GB unpacked):
+
+```sh
+sh tools/lean.sh          # Lean 4.36.0 into .tools/
+pixi install              # Python with libclang into .pixi/ (https://pixi.sh)
+sh tools/proofs.sh        # compile, lint and prove every domain: "proofs: PASS" on 5-strong
+```
+
+| | |
+|---|---|
+| `slides/strong-coffee.md` | the lesson as slides ([Marp](https://marp.app) Markdown; it reads as plain Markdown too) |
+| `docs/STRONG_DOMAINS.md` | the approach: safe ⇒ strong, what a domain is, what a proof rests on (a draft) |
+| `src/strong/` | the domains, each with its proof beside it |
+| `src/machine.cpp` | the edge: commands in, words out; not proved, checked safe |
+| `tools/prover/` | the prover: reads the C++, says what is owed, audits the proof |
+
 MIT licensed (`LICENSE`).
