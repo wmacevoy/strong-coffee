@@ -43,7 +43,7 @@ int main()
     uint32_t a = number( first ), b = number( second );
 
     if ( strcmp( word, "coin" ) == 0 ) {
-      credit.insert_checked( a );
+      if ( !credit.insert_checked( a ) ) printf( "coin returned\n" );
       printf( "credit %u\n", credit.getBalance_checked() );
     } else if ( strcmp( word, "buy" ) == 0 ) {
       if ( a >= 4 ) {
@@ -64,8 +64,9 @@ int main()
     } else if ( strcmp( word, "refund" ) == 0 ) {
       printf( "change %u\n", credit.refund_checked() );
     } else if ( strcmp( word, "restock" ) == 0 ) {
-      if ( rack.restock_checked( a, b ) ) printf( "slot %u has %u\n", a, rack.podsIn_checked( a ) );
-      else printf( "no such slot\n" );
+      if ( a >= 4 ) printf( "no such slot\n" );
+      else if ( !rack.restock_checked( a, b ) ) printf( "slot %u has room for %u\n", a, 10 - rack.podsIn_checked( a ) );
+      else printf( "slot %u has %u\n", a, rack.podsIn_checked( a ) );
     } else if ( strcmp( word, "fill" ) == 0 ) {
       tank.fill_checked( a );
       printf( "water %u\n", tank.getLevel_checked() );

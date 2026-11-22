@@ -28,14 +28,16 @@ public:
   bool take_checked( uint32_t slot )
   {
     if ( slot >= 4 ) return false;
+    if ( count[slot] == 0 ) return false;
     count[slot] = count[slot] - 1;
     return true;
   }
 
-  /* Pods put in a slot. */
+  /* Pods put in a slot, if they fit. */
   bool restock_checked( uint32_t slot, uint32_t pods )
   {
     if ( slot >= 4 ) return false;
+    if ( pods > 10 - count[slot] ) return false;
     count[slot] = count[slot] + pods;
     return true;
   }

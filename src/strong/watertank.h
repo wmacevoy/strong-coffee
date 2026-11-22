@@ -16,8 +16,11 @@ public:
   /* Water poured in; what does not fit runs over. */
   void fill_checked( uint32_t ml )
   {
-    level = level + ml;
-    if ( level > 2000 ) level = 2000;
+    if ( ml > 2000 - level ) {
+      level = 2000;
+    } else {
+      level = level + ml;
+    }
   }
 
   /* Water drawn for a cup, if there is that much. */

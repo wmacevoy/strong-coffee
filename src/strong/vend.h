@@ -14,8 +14,8 @@ namespace Strong {
 inline uint32_t vend_checked( uint32_t credit, uint32_t price, uint32_t pods, uint32_t water )
 {
   if ( credit < price ) return 1;
-  if ( pods < 0 ) return 2;
-  if ( water > 250 ) return 0;
+  if ( pods == 0 ) return 2;
+  if ( water >= 250 ) return 0;
   return 3;
 }
 
