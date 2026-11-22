@@ -43,35 +43,35 @@ int main()
     uint32_t a = number( first ), b = number( second );
 
     if ( strcmp( word, "coin" ) == 0 ) {
-      credit.insert( a );
-      printf( "credit %u\n", credit.getBalance() );
+      credit.insert_checked( a );
+      printf( "credit %u\n", credit.getBalance_checked() );
     } else if ( strcmp( word, "buy" ) == 0 ) {
       if ( a >= 4 ) {
         printf( "no such slot\n" );
         continue;
       }
-      switch ( Strong::vend( credit.getBalance(), prices[a], rack.left( a ), tank.getLevel() ) ) {
+      switch ( Strong::vend_checked( credit.getBalance_checked(), prices[a], rack.podsIn_checked( a ), tank.getLevel_checked() ) ) {
         case 0:
-          rack.take( a );
-          tank.draw( 250 );
+          rack.take_checked( a );
+          tank.draw_checked( 250 );
           printf( "enjoy your %s\n", names[a] );
-          printf( "change %u\n", credit.pay( prices[a] ) );
+          printf( "change %u\n", credit.pay_checked( prices[a] ) );
           break;
         case 1: printf( "not enough credit\n" ); break;
         case 2: printf( "sold out\n" ); break;
         default: printf( "out of water\n" ); break;
       }
     } else if ( strcmp( word, "refund" ) == 0 ) {
-      printf( "change %u\n", credit.refund() );
+      printf( "change %u\n", credit.refund_checked() );
     } else if ( strcmp( word, "restock" ) == 0 ) {
-      if ( rack.restock( a, b ) ) printf( "slot %u has %u\n", a, rack.left( a ) );
+      if ( rack.restock_checked( a, b ) ) printf( "slot %u has %u\n", a, rack.podsIn_checked( a ) );
       else printf( "no such slot\n" );
     } else if ( strcmp( word, "fill" ) == 0 ) {
-      tank.fill( a );
-      printf( "water %u\n", tank.getLevel() );
+      tank.fill_checked( a );
+      printf( "water %u\n", tank.getLevel_checked() );
     } else if ( strcmp( word, "status" ) == 0 ) {
-      printf( "credit %u water %u pods %u %u %u %u\n", credit.getBalance(), tank.getLevel(), rack.left( 0 ), rack.left( 1 ),
-              rack.left( 2 ), rack.left( 3 ) );
+      printf( "credit %u water %u pods %u %u %u %u\n", credit.getBalance_checked(), tank.getLevel_checked(), rack.podsIn_checked( 0 ), rack.podsIn_checked( 1 ),
+              rack.podsIn_checked( 2 ), rack.podsIn_checked( 3 ) );
     } else {
       printf( "unknown command\n" );
     }

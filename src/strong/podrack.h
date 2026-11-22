@@ -18,14 +18,14 @@ public:
   }
 
   /* How many pods are in a slot (none, for a slot there is not). */
-  uint32_t left( uint32_t slot ) const
+  uint32_t podsIn_checked( uint32_t slot ) const
   {
     if ( slot >= 4 ) return 0;
     return count[slot];
   }
 
   /* One pod taken from a slot, to brew. */
-  bool take( uint32_t slot )
+  bool take_checked( uint32_t slot )
   {
     if ( slot >= 4 ) return false;
     count[slot] = count[slot] - 1;
@@ -33,7 +33,7 @@ public:
   }
 
   /* Pods put in a slot. */
-  bool restock( uint32_t slot, uint32_t pods )
+  bool restock_checked( uint32_t slot, uint32_t pods )
   {
     if ( slot >= 4 ) return false;
     count[slot] = count[slot] + pods;

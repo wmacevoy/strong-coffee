@@ -11,17 +11,17 @@ class WaterTank
 public:
   WaterTank() { level = 2000; }
 
-  uint32_t getLevel() const { return level; }
+  uint32_t getLevel_checked() const { return level; }
 
   /* Water poured in; what does not fit runs over. */
-  void fill( uint32_t ml )
+  void fill_checked( uint32_t ml )
   {
     level = level + ml;
     if ( level > 2000 ) level = 2000;
   }
 
   /* Water drawn for a cup, if there is that much. */
-  bool draw( uint32_t ml )
+  bool draw_checked( uint32_t ml )
   {
     if ( level < ml ) return false;
     level = level - ml;

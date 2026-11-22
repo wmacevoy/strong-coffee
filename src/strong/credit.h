@@ -14,19 +14,19 @@ public:
   Credit() { balance = 0; }
 
   /* A coin put in. */
-  void insert( uint32_t cents ) { balance = balance + cents; }
+  void insert_checked( uint32_t cents ) { balance = balance + cents; }
 
-  uint32_t getBalance() const { return balance; }
+  uint32_t getBalance_checked() const { return balance; }
 
   /* A price paid from the balance: what comes back is the change. */
-  uint32_t pay( uint32_t price )
+  uint32_t pay_checked( uint32_t price )
   {
     balance = balance - price;
     return balance;
   }
 
   /* Everything put in, given back. */
-  uint32_t refund()
+  uint32_t refund_checked()
   {
     uint32_t all = balance;
     balance = 0;
