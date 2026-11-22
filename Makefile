@@ -6,13 +6,13 @@ CXX ?= c++
 CXXFLAGS ?= -std=c++17 -O1 -g -Wall
 SANITIZE = -fsanitize=address,undefined -fno-sanitize-recover=all
 
-build/coffee: coffee.cpp
+build/coffee: src/machine.cpp src/strong/*.h
 	mkdir -p build
-	$(CXX) $(CXXFLAGS) -o $@ coffee.cpp
+	$(CXX) $(CXXFLAGS) -Isrc -o $@ src/machine.cpp
 
-build/coffee-safe: coffee.cpp
+build/coffee-safe: src/machine.cpp src/strong/*.h
 	mkdir -p build
-	$(CXX) $(CXXFLAGS) $(SANITIZE) -o $@ coffee.cpp
+	$(CXX) $(CXXFLAGS) $(SANITIZE) -Isrc -o $@ src/machine.cpp
 
 test: build/coffee
 	sh tests/run.sh build/coffee

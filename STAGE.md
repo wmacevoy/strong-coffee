@@ -1,62 +1,48 @@
-# Stage 2: safe, still messy and wrong
+# Stage 3: safe, in domains, still wrong
 
-**Safety first.** Until a program is safe, nothing about it can be reasoned about: a write outside
-an array may change any variable, and arithmetic C++ gives no meaning to lets the compiler do
-anything at all. So the first move is not to make the machine right. It is to make every line
-safe: no memory error, every loop ends, nothing touched that was not handed over.
+The machine's rules were in one loop, beside the parsing and the printing, and every line could
+change every piece of state. Now each rule has a place of its own, a **domain**: its state private,
+reached only through its methods, and what is always true of it written down as `invariant()`.
 
-```sh
-make safe        # the sanitizers watch, and ten seeds of random commands are fed in: "safe: PASS"
-make test        # the old tests still pass
-```
+| Domain | What it is | Its rule |
+| ------ | ---------- | -------- |
+| `src/strong/credit.h`, `Credit` | the money put in and not yet spent | never more than 1000 cents |
+| `src/strong/podrack.h`, `PodRack` | the pods in four slots | a slot holds at most 10 |
+| `src/strong/watertank.h`, `WaterTank` | the water | at most 2000 ml |
+| `src/strong/vend.h`, `vend` | may a drink be sold? | a function: no state, its answer depends only on what it is told |
 
-## What stage 1 did, under the sanitizers
+The simplest domain is one class, or one function: `vend` is a domain too.
 
-`make safe` is new in this stage. Run its check on stage 1's machine, and it stops at the first
-seed:
-
-```sh
-git show 1-unsafe:coffee.cpp > build/stage1.cpp
-c++ -std=c++17 -g -fsanitize=address,undefined -fno-sanitize-recover=all -o build/stage1 build/stage1.cpp
-sh tests/safe.sh build/stage1      # safe: FAIL: seed 1, index 4 out of bounds for type 'int [4]'
-```
-
-Each of these, tried alone:
-
-| Command | What the sanitizer said |
-| ------- | ----------------------- |
-| `buy 4` | `index 4 out of bounds for type 'int [4]'` |
-| `buy 2`, with credit | `global-buffer-overflow`: "enjoy your caramel macchiato" is 28 bytes, and `display` holds 24 |
-| `coin 2147483647`, `coin 1` | `signed integer overflow: 2147483647 + 1 cannot be represented in type 'int'` |
-| `restock 7 1` | a load outside `pods` |
-| `fill 2147483647` | `signed integer overflow: 2000 + 2147483647` |
-
-The tests never tried a fifth slot, the drink with the long name, or a big number. A customer at
-the machine would, sooner or later.
-
-## What changed
-
-- Every number is `uint32_t`. Unsigned arithmetic always has a meaning: it wraps.
-- What the customer types is read by `strtoul`, which has a meaning for every input.
-- Every slot is tested (`a >= 4`) before it is used as an index.
-- Text is written with its size (`snprintf`), into room enough.
-
-Nothing else. The shape is the same.
-
-## What this rests on
-
-That every line is safe is now **checked, not proved**: by the sanitizers, on the inputs the
-seeds made. That is the assumption the rest of the lesson stands on, stated plainly: *every line of
-code is safe.* Safe, not correct.
-
-## Still wrong
-
-The machine is safe and still gives wrong answers. The sanitizers cannot see them: a wrong answer
-is not a memory error. For instance:
+What is left is the **edge**, `src/machine.cpp`: it reads a command, asks the domains, and prints.
+It is not one of the domains and is not proved: it is safe (`make safe`), and that is all that
+is assumed of it.
 
 ```sh
-make && printf 'coin 100\ncoin 100\nbuy 0\nrefund\n' | build/coffee
+make test        # PASS
+make safe        # safe: PASS
 ```
 
-**Next, `3-domains`:** before the errors can be found, the machine is cleaned into domains, so that
-each rule (money, pods, water, what may be sold) can be reasoned about alone.
+## Nothing was fixed
+
+This stage moved code and changed no answer. The same 6000 random commands, fed to this machine and
+to `2-safe`'s, give the same 6000 answers, wrong ones included:
+
+```sh
+for i in 1 2 3; do sh tests/shake.sh $i; done > build/s.in
+git show 2-safe:coffee.cpp > build/s2.cpp && c++ -std=c++17 -o build/s2 build/s2.cpp
+build/s2 < build/s.in > build/a.out; make -s && build/coffee < build/s.in > build/b.out
+cmp build/a.out build/b.out && echo same
+```
+
+## What it bought
+
+Read `src/strong/podrack.h` alone. It is 50 lines, and nothing outside it can change `count`: not
+the edge, not `Credit`, not a stray write (every line is safe). So to know whether a slot can ever
+hold more than 10, you read 50 lines, not the machine. That is **isolation**, and it is what makes
+the reasoning simple: each rule is checked against one domain, from any state its invariant
+allows.
+
+Each domain's rule is written, and none has been checked. Some do not hold.
+
+**Next, `4-errors`:** each rule is tried for every input, not the inputs a test thought of. The
+errors are found there.
