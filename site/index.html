@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strong coffee</title>
+<meta name="description" content="A lesson in five branches: a pod coffee machine, from unsafe, messy and wrong to strong.">
+<style>
+  :root {
+    --bg: #fbfaf8; --fg: #1f1d1a; --muted: #6b655d; --line: #e4e0d9; --accent: #7a4a21; --card: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #171513; --fg: #ece8e2; --muted: #a39b90; --line: #2f2b27; --accent: #d9a273; --card: #1f1c19; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg);
+         font: 17px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  main { max-width: 46rem; margin: 0 auto; padding: 3rem 1rem 4rem; }
+  h1 { font-size: 2.2rem; margin: 0 0 .25rem; letter-spacing: -.01em; }
+  h2 { font-size: 1.15rem; margin: 2.5rem 0 .75rem; }
+  p { margin: .5rem 0; }
+  .lede { color: var(--muted); font-size: 1.1rem; margin-bottom: 1.5rem; }
+  a { color: var(--accent); }
+  .start { display: inline-block; margin: .5rem .75rem .5rem 0; padding: .6rem 1rem; border-radius: .5rem;
+           background: var(--accent); color: var(--bg); text-decoration: none; font-weight: 600; }
+  .quiet { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+  .claim { border-left: 3px solid var(--accent); padding: .25rem 0 .25rem 1rem; margin: 1.5rem 0; }
+  ol { list-style: none; padding: 0; margin: 0; counter-reset: stage; }
+  ol li { counter-increment: stage; background: var(--card); border: 1px solid var(--line); border-radius: .6rem;
+          padding: .9rem 1rem .9rem 3.2rem; margin: .6rem 0; position: relative; }
+  ol li::before { content: counter(stage); position: absolute; left: 1rem; top: .85rem; width: 1.6rem; height: 1.6rem;
+                  border-radius: 50%; background: var(--line); text-align: center; font-weight: 700; line-height: 1.6rem; }
+  code { font: .92em ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .branch { font-weight: 600; }
+  .what { color: var(--muted); }
+  pre { background: var(--card); border: 1px solid var(--line); border-radius: .5rem; padding: .8rem 1rem;
+        overflow-x: auto; font-size: .9rem; }
+  footer { margin-top: 3rem; color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Strong coffee</h1>
+  <p class="lede">A pod coffee machine, written first as it often is (unsafe, messy and wrong, with passing
+  tests), then made safe, cleaned into domains, its errors found, and finished strong.</p>
+
+  <a class="start" href="slides/">The slides</a>
+  <a class="start quiet" href="https://github.com/wmacevoy/strong-coffee">The code</a>
+  <a class="start quiet" href="https://github.com/wmacevoy/strong-coffee/blob/main/docs/STRONG_DOMAINS.md">The approach</a>
+
+  <div class="claim">
+    <p><strong>Safe ⇒ Strong.</strong> The assumption, first: every line of code is safe. It commits no memory
+    error, it ends, and it touches nothing it was not lent. Safe, not correct.</p>
+    <p>Given that, strong is proved: each domain is isolated, reasoned about alone, and its invariants are
+    proved for every input.</p>
+  </div>
+
+  <h2>The five branches</h2>
+  <ol>
+    <li><a class="branch" href="https://github.com/wmacevoy/strong-coffee/blob/1-unsafe/STAGE.md"><code>1-unsafe</code></a>
+      <span class="what">One file, the state in globals. The tests pass. How many errors can you find?</span></li>
+    <li><a class="branch" href="https://github.com/wmacevoy/strong-coffee/blob/2-safe/STAGE.md"><code>2-safe</code></a>
+      <span class="what">Sanitizers and seeded random commands find five memory errors. Safety first: until it is
+      safe, nothing can be reasoned about.</span></li>
+    <li><a class="branch" href="https://github.com/wmacevoy/strong-coffee/blob/3-domains/STAGE.md"><code>3-domains</code></a>
+      <span class="what">Each rule in its own domain, its state private, its invariant written. No answer
+      changes; each rule can now be read alone.</span></li>
+    <li><a class="branch" href="https://github.com/wmacevoy/strong-coffee/blob/4-errors/STAGE.md"><code>4-errors</code></a>
+      <span class="what">Each rule tried for every input. The compiler, the invariants and the claims find nine
+      errors, and one input each shows it is the code, not the proof.</span></li>
+    <li><a class="branch" href="https://github.com/wmacevoy/strong-coffee/blob/5-strong/STAGE.md"><code>5-strong</code></a>
+      <span class="what">Each error fixed where it lives. Every domain proved, and what the four do together.</span></li>
+  </ol>
+
+  <h2>Run it</h2>
+  <pre><code>git clone https://github.com/wmacevoy/strong-coffee
+cd strong-coffee
+git switch 1-unsafe &amp;&amp; make test</code></pre>
+  <p>From <code>4-errors</code> on, the domains are proved; the
+  <a href="https://github.com/wmacevoy/strong-coffee#readme">README</a> says how to get Lean and the prover's Python.</p>
+
+  <footer>MIT licensed. The slides are rendered from
+  <a href="https://github.com/wmacevoy/strong-coffee/blob/main/slides/strong-coffee.md"><code>slides/strong-coffee.md</code></a>
+  by Marp on every push to <code>main</code>.</footer>
+</main>
+</body>
+</html>

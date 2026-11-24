@@ -32,7 +32,8 @@ sh tools/proofs.sh        # compile, lint and prove every domain: "proofs: PASS"
 
 | | |
 |---|---|
-| `slides/strong-coffee.md` | the lesson as slides ([Marp](https://marp.app) Markdown; it reads as plain Markdown too) |
+| `slides/strong-coffee.md` | the lesson as slides ([Marp](https://marp.app) Markdown; it reads as plain Markdown too), rendered at https://wmacevoy.github.io/strong-coffee/slides/ |
+| `site/`, `.github/workflows/pages.yml` | the lesson's page, https://wmacevoy.github.io/strong-coffee, built on every push to `main` |
 | `docs/STRONG_DOMAINS.md` | the approach: safe ⇒ strong, what a domain is, what a proof rests on (a draft) |
 | `src/strong/` | the domains, each with its proof beside it |
 | `src/machine.cpp` | the edge: commands in, words out; not proved, checked safe |
