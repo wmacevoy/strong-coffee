@@ -1,6 +1,6 @@
 // The pod coffee machine's edge: it reads commands and prints what the machine says. The rules are
-// the domains' (src/strong/): this file only reads, asks them, and writes. It is not proved, and
-// it is safe (make safe).
+// the machine's (src/strong/machine.h), and its parts': this file only reads, asks it, and
+// writes. It is not proved, and it is safe (make safe).
 //
 // Commands, one per line, on standard input:
 //   coin CENTS        put a coin in (5, 10, 25 or 100)
@@ -15,10 +15,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "strong/credit.h"
-#include "strong/podrack.h"
-#include "strong/vend.h"
-#include "strong/watertank.h"
+#include "strong/machine.h"
 
 namespace {
 
@@ -32,9 +29,7 @@ uint32_t number( const char* text ) { return (uint32_t) strtoul( text, nullptr, 
 
 int main()
 {
-  Strong::Credit credit;
-  Strong::PodRack rack;
-  Strong::WaterTank tank;
+  Strong::Machine machine;
 
   char line[64];
   while ( fgets( line, sizeof line, stdin ) ) {
@@ -43,36 +38,34 @@ int main()
     uint32_t a = number( first ), b = number( second );
 
     if ( strcmp( word, "coin" ) == 0 ) {
-      if ( !credit.insert_checked( a ) ) printf( "coin returned\n" );
-      printf( "credit %u\n", credit.getBalance_checked() );
+      if ( !machine.insert_checked( a ) ) printf( "coin returned\n" );
+      printf( "credit %u\n", machine.getBalance_checked() );
     } else if ( strcmp( word, "buy" ) == 0 ) {
       if ( a >= 4 ) {
         printf( "no such slot\n" );
         continue;
       }
-      switch ( Strong::vend_checked( credit.getBalance_checked(), prices[a], rack.podsIn_checked( a ), tank.getLevel_checked() ) ) {
+      switch ( machine.buy_checked( a, prices[a] ) ) {
         case 0:
-          rack.take_checked( a );
-          tank.draw_checked( 250 );
           printf( "enjoy your %s\n", names[a] );
-          printf( "change %u\n", credit.pay_checked( prices[a] ) );
+          printf( "change %u\n", machine.takeChange_checked() );
           break;
         case 1: printf( "not enough credit\n" ); break;
         case 2: printf( "sold out\n" ); break;
         default: printf( "out of water\n" ); break;
       }
     } else if ( strcmp( word, "refund" ) == 0 ) {
-      printf( "change %u\n", credit.refund_checked() );
+      printf( "change %u\n", machine.refund_checked() );
     } else if ( strcmp( word, "restock" ) == 0 ) {
       if ( a >= 4 ) printf( "no such slot\n" );
-      else if ( !rack.restock_checked( a, b ) ) printf( "slot %u has room for %u\n", a, 10 - rack.podsIn_checked( a ) );
-      else printf( "slot %u has %u\n", a, rack.podsIn_checked( a ) );
+      else if ( !machine.restock_checked( a, b ) ) printf( "slot %u has room for %u\n", a, 10 - machine.podsIn_checked( a ) );
+      else printf( "slot %u has %u\n", a, machine.podsIn_checked( a ) );
     } else if ( strcmp( word, "fill" ) == 0 ) {
-      tank.fill_checked( a );
-      printf( "water %u\n", tank.getLevel_checked() );
+      machine.fill_checked( a );
+      printf( "water %u\n", machine.getLevel_checked() );
     } else if ( strcmp( word, "status" ) == 0 ) {
-      printf( "credit %u water %u pods %u %u %u %u\n", credit.getBalance_checked(), tank.getLevel_checked(), rack.podsIn_checked( 0 ), rack.podsIn_checked( 1 ),
-              rack.podsIn_checked( 2 ), rack.podsIn_checked( 3 ) );
+      printf( "credit %u water %u pods %u %u %u %u\n", machine.getBalance_checked(), machine.getLevel_checked(), machine.podsIn_checked( 0 ),
+              machine.podsIn_checked( 1 ), machine.podsIn_checked( 2 ), machine.podsIn_checked( 3 ) );
     } else {
       printf( "unknown command\n" );
     }

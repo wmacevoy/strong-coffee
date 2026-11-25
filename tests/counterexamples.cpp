@@ -7,8 +7,8 @@
 #include <cstdio>
 
 #include "strong/credit.h"
+#include "strong/machine.h"
 #include "strong/podrack.h"
-#include "strong/vend.h"
 #include "strong/watertank.h"
 
 static int wrong = 0;
@@ -21,8 +21,31 @@ static void say( bool holds, const char* what )
 
 int main()
 {
-  say( Strong::vend_checked( 200, 150, 0, 2000 ) != 0, "vend: a drink is not sold from an empty slot (paid, no pod, water)" );
-  say( Strong::vend_checked( 200, 150, 5, 250 ) == 0, "vend: a drink is sold with exactly a cup of water left (250 ml)" );
+  {
+    Strong::Machine machine;
+    for ( int i = 0; i < 10; i++ ) {
+      machine.insert_checked( 100 );
+      machine.insert_checked( 100 );
+      machine.buy_checked( 0, 150 );
+      machine.takeChange_checked();
+      machine.fill_checked( 250 );
+    }
+    machine.insert_checked( 100 );
+    machine.insert_checked( 100 );
+    say( machine.buy_checked( 0, 150 ) != 0, "Machine: a drink is not sold from an empty slot (paid, no pod, water)" );
+  }
+  {
+    Strong::Machine machine;
+    for ( int i = 0; i < 7; i++ ) {
+      machine.insert_checked( 100 );
+      machine.insert_checked( 100 );
+      machine.buy_checked( 1, 150 );
+      machine.takeChange_checked();
+    }
+    machine.insert_checked( 100 );
+    machine.insert_checked( 100 );
+    say( machine.getLevel_checked() == 250 && machine.buy_checked( 1, 150 ) == 0, "Machine: a drink is sold with exactly a cup of water left (250 ml)" );
+  }
   {
     Strong::Credit credit;
     credit.insert_checked( 3 );
