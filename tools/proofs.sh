@@ -13,7 +13,7 @@
 # D.claims.lean (the proof of what is owed), and, if there are any, D.proof.cpp (what is claimed of
 # it, as a test that cannot be run) and D.proof-claims.lean (the proof of those claims).
 #
-# tools/prover is a copy of the prover of strong-domain-driven-design, at 1153a6f, where it is made
+# tools/prover is a copy of the prover of strong-domain-driven-design, at a4de40f, where it is made
 # and tested.
 #
 # Needs Lean 4.36.0 (tools/lean.sh fetches it into .tools/) and a Python with libclang (pixi
@@ -28,7 +28,7 @@ export LEAN PYTHON
 CC=${CC:-cc}; CXX=${CXX:-c++}; export CC CXX
 
 # Each domain, in the order it is proved.
-ALL="Credit PodRack WaterTank vend_checked"
+ALL="Credit PodRack WaterTank Machine"
 EACH=; [ "$1" != --each ] || { EACH=1; shift; }
 DOMAINS=${*:-$ALL}
 FOUND=$PWD/build/found.txt; : > "$FOUND"

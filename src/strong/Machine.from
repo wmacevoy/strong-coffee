@@ -1,0 +1,4 @@
+src/strong/machine.h
+uses Credit
+uses PodRack
+uses WaterTank
