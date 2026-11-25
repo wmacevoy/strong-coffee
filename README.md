@@ -1,9 +1,10 @@
 # strong-coffee
 
-A lesson in five branches: a pod coffee machine, written first as it often is (unsafe, messy and
+A lesson in six branches: a pod coffee machine, written first as it often is (unsafe, messy and
 wrong, with passing tests), then made **safe**, cleaned into **domains**, its **errors found**, and
 finished **strong**: every domain isolated, simple to reason about, and its invariants proved by a
-machine for every input.
+machine for every input. Last, the rules that span the domains are proved too, in a machine that
+has them as **parts**.
 
 | Branch | The machine is | What moves it on |
 | ------ | -------------- | ---------------- |
@@ -12,8 +13,9 @@ machine for every input.
 | `3-domains` | safe, in domains, still wrong | private state, one rule each, an edge for the I/O |
 | `4-errors` | the same, with its errors found | invariants and claims, tried for every input |
 | `5-strong` | strong | the errors fixed, and every claim proved |
+| `6-parts` | strong, whole | the rules between the domains, in a domain that has them as parts |
 
-`main` is `5-strong`, with the slides (`slides/`) and the approach written out (`docs/`). Each
+`main` is `6-parts`, with the slides (`slides/`) and the approach written out (`docs/`). Each
 branch has a `STAGE.md`: what this stage is, what is wrong with it, and what the next one does.
 
 ```sh
@@ -27,7 +29,7 @@ does, fetched once (Linux, x86_64 or aarch64; Lean is about 3 GB unpacked):
 ```sh
 sh tools/lean.sh          # Lean 4.36.0 into .tools/
 pixi install              # Python with libclang into .pixi/ (https://pixi.sh)
-sh tools/proofs.sh        # compile, lint and prove every domain: "proofs: PASS" on 5-strong
+sh tools/proofs.sh        # compile, lint and prove every domain: "proofs: PASS" on 5-strong and 6-parts
 ```
 
 | | |

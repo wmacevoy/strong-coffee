@@ -1,6 +1,6 @@
 # Strong domains
 
-*A draft. The example throughout is this repository's coffee machine; its five branches are the
+*A draft. The example throughout is this repository's coffee machine; its six branches are the
 lesson this document explains.*
 
 ## Safe ⇒ Strong
@@ -48,7 +48,8 @@ bool invariant() const { return count[0] <= 10 && count[1] <= 10 && count[2] <= 
 ```
 
 The coffee machine has four domains: `Credit`, `PodRack` and `WaterTank`, each one class, and
-`vend`, one function: may a drink be sold?
+`vend`, one function: may a drink be sold? (On `6-parts`, `vend` gives way to `Machine`, which has
+the other three as parts.)
 The rest, `src/machine.cpp`, is the **edge**: it reads commands, asks the domains, and prints.
 
 ## What isolation takes
@@ -158,6 +159,9 @@ broken, each found by trying to prove it.
 4. **`4-errors`**: each rule tried for every input. The compiler, the invariants and the claims
    find nine errors; one input each shows it is the code and not the proof.
 5. **`5-strong`**: each fixed where it lives, and every domain proved.
+6. **`6-parts`**: the rule that spans the domains (a sale takes a pod, a cup and the price) moves
+   out of the edge into `Machine`, which has a Credit, a PodRack and a WaterTank as parts, and is
+   proved there.
 
 ## Guidelines
 
@@ -190,6 +194,9 @@ It proves each class and each function alone: no memory error, ending, and the i
 every input, with Lean checking each proof. A proof file is of a set: its own domain and every
 domain proved before it. It may make objects of their classes, call their methods (const ones
 handed numbers too) and call their functions, so what several domains do together is claimed
-and proved (`vend_checked.proof.cpp`: a machine just filled sells any drink the credit covers).
-Not yet: one invariant across several classes; reference parameters under the borrow; the
-handle; and `volatile` methods.
+and proved (`Machine.proof.cpp`: a machine just filled sells exactly when the credit covers the
+price). A class may have another proved class as a **part**: made in its constructor, changed only
+by its own methods, never copied or handed on. Each part is still proved alone, and the class that
+has it is proved from the parts' proofs, so one invariant spans several classes (`Machine`: the
+credit and the change together at most 10.00). Not yet: a part of a class template; reference
+parameters under the borrow; the handle; and `volatile` methods.

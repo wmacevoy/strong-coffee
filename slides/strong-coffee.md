@@ -6,9 +6,9 @@ paginate: true
 
 # Strong coffee
 
-A pod coffee machine, from **unsafe, messy and wrong** to **strong**, in five branches.
+A pod coffee machine, from **unsafe, messy and wrong** to **strong**, in six branches.
 
-`git switch 1-unsafe` … `git switch 5-strong`
+`git switch 1-unsafe` … `git switch 6-parts`
 
 ---
 
@@ -177,6 +177,27 @@ PROVED PodRack: 8 statements
 
 ---
 
+## 6. `6-parts`
+
+The rule that spans the domains was in the edge, **not proved**:
+take a pod, draw a cup, take the price. Forget one line: every domain still proved.
+
+```cpp
+class Machine {
+  ...
+  uint32_t buy_checked( uint32_t slot, uint32_t price );  // the sale, whole
+  bool invariant() const { return change <= OWED - credit.getBalance_checked(); }
+private:
+  Credit credit;  PodRack rack;  WaterTank tank;          // parts
+  uint32_t change;
+};
+```
+
+A part is changed only by its own methods: each still proved **alone**,
+the machine proved from their proofs. One home for the rule between them.
+
+---
+
 ## What it rests on
 
 - every line is safe (checked: `make safe`)
@@ -184,7 +205,7 @@ PROVED PodRack: 8 statements
 - the prover reads the C++ rightly (compared, not proved)
 - the invariant says what you meant: **read it**
 
-Not proved: that the machine as a whole serves coffee. That is tested.
+Not proved: that the edge prints the right words, and asks the right price. That is tested.
 
 ---
 
