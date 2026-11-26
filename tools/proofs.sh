@@ -31,7 +31,7 @@ CC=${CC:-cc}; CXX=${CXX:-c++}; export CC CXX
 ALL="Credit PodRack WaterTank Machine"
 EACH=; [ "$1" != --each ] || { EACH=1; shift; }
 DOMAINS=${*:-$ALL}
-FOUND=$PWD/build/found.txt; : > "$FOUND"
+mkdir -p build; FOUND=$PWD/build/found.txt; : > "$FOUND"
 found() { echo "$1" >> "$FOUND"; [ -n "$EACH" ] || { echo "proofs: $1"; exit 1; }; }
 STRONG=src/strong
 
