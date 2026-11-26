@@ -234,6 +234,64 @@ Fast enough for embedded code.
 
 ---
 
+## How: the checks
+
+| Run | Says | Proves? |
+|---|---|---|
+| `make test` | the written cases: `PASS` | no |
+| `make safe` | sanitizers, 10 seeds of random commands | no |
+| `make counterexamples` | each input that once broke a rule | no |
+| `sh tools/proofs.sh` | compile, lint, prove: `proofs: PASS` | **yes**, every input |
+
+Each stage: run the next check, change only what it found, show it passes.
+`git diff 3-domains 4-errors` is exactly what a stage changed.
+
+---
+
+## How: a proof
+
+1. A class under `src/strong/`, with `invariant()`; `WaterTank.from` names its file
+2. Run the prover **first**: it writes what is owed, from the C++ alone
+
+```lean
+draw_checked_inv : ∀ me ml me' r,
+  Inv me → draw_checked me ml = some (me', r) → Inv me'
+```
+
+3. Prove each, in `WaterTank.claims.lean`: unfold, split each `if`, `bv_omega`
+
+```lean
+  simp only [WaterTank.draw_checked] at h
+  split at h
+  · simp at h; rw [← h.1]; exact hinv
+  · simp at h; rw [← h.1]; simp only [Inv] at *; bv_omega
+```
+
+---
+
+## How: see it fail
+
+Break the code on purpose: the tank's test off by one, `ml > 2001 - level`
+
+```
+claims/WaterTankClaims.lean:29:47: error: omega could not prove the goal
+proofs: FAIL: WaterTank: a proof does not hold
+```
+
+Claim what it does, as a test over every 32-bit number (`WaterTank.proof.cpp`):
+
+```cpp
+for ( uint32_t ml : all<uint32_t>() ) {
+  Strong::WaterTank tank;
+  tank.fill_checked( ml );
+  PROVE( tank.getLevel_checked() == 2000 );
+}
+```
+
+Run at small bounds first, then proved. `docs/HOWTO.md` has every step.
+
+---
+
 ## Take away
 
 1. Safety first, and say how it is checked
@@ -243,4 +301,4 @@ Fast enough for embedded code.
 5. A failed proof says where to look; keep the input that broke it
 6. Say what is proved, what is assumed, what is not yet
 
-`docs/STRONG_DOMAINS.md`
+`docs/HOWTO.md` (how) · `docs/STRONG_DOMAINS.md` (why)
